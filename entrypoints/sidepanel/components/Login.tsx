@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
-import { supabase } from '../../../utils/supabase';
+import { SUPABASE_CONFIG_ERROR_MESSAGE, isSupabaseConfigured, supabase } from '../../../utils/supabase';
 import { signInWithGoogleOAuth } from '../../../utils/supabase-oauth';
 import { useI18n } from '../i18n/i18n';
 
@@ -35,6 +35,10 @@ export default function Login({ onClose }: { onClose?: () => void }) {
 
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!supabase || !isSupabaseConfigured) {
+            showMessage('error', SUPABASE_CONFIG_ERROR_MESSAGE);
+            return;
+        }
         setLoading(true);
         setMessage(null);
         const { error } = await supabase.auth.signInWithOtp({
@@ -54,6 +58,10 @@ export default function Login({ onClose }: { onClose?: () => void }) {
 
     const handleVerifyOtp = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!supabase || !isSupabaseConfigured) {
+            showMessage('error', SUPABASE_CONFIG_ERROR_MESSAGE);
+            return;
+        }
         setLoading(true);
         setMessage(null);
         const { error } = await supabase.auth.verifyOtp({

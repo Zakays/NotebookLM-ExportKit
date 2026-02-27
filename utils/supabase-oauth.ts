@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { supabase } from './supabase';
+import { SUPABASE_CONFIG_ERROR_MESSAGE, isSupabaseConfigured, supabase } from './supabase';
 import { browser } from 'wxt/browser';
 
 const DEFAULT_REDIRECT_PATH = 'supabase-oauth';
@@ -32,6 +32,10 @@ export const getGoogleDriveOAuthScopes = () => {
 };
 
 export const signInWithGoogleOAuth = async (scopes?: string, loginHint?: string) => {
+    if (!supabase || !isSupabaseConfigured) {
+        throw new Error(SUPABASE_CONFIG_ERROR_MESSAGE);
+    }
+
     const redirectTo = browser.identity.getRedirectURL(DEFAULT_REDIRECT_PATH);
     if (import.meta.env.DEV) {
         console.info('[auth] Google OAuth redirectTo:', redirectTo);

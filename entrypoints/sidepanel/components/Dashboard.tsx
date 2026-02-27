@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { supabase } from '../../../utils/supabase';
+import { isSupabaseConfigured, supabase } from '../../../utils/supabase';
 import { browser } from 'wxt/browser';
 import { getGoogleDriveOAuthScopes } from '../../../utils/supabase-oauth';
 import { sanitizeFilename, getTimestamp } from '../../../utils/common';
@@ -639,7 +639,9 @@ export default function Dashboard({
     const handleSignOut = async () => {
         await disconnectDrive({ silent: true });
         await disconnectNotion({ silent: true });
-        await supabase.auth.signOut();
+        if (supabase && isSupabaseConfigured) {
+            await supabase.auth.signOut();
+        }
     };
 
     const handleUpgrade = async () => {
