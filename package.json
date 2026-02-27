@@ -14,8 +14,7 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
-    "postinstall": "wxt prepare",
-    "chrome:extension": "pnpm build && node scripts/export-chrome-extension.mjs"
+    "postinstall": "wxt prepare"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.89.0",
