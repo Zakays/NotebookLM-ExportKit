@@ -17,7 +17,7 @@
 
 import { useState, useEffect } from 'react';
 import './App.css';
-import { supabase } from '../../utils/supabase';
+import { isSupabaseConfigured, supabase } from '../../utils/supabase';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import { I18nProvider } from './i18n/i18n';
@@ -27,15 +27,19 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
+    if (!supabase) {
+      return;
+    }
+    const supabaseClient = supabase;
     let isMounted = true;
     const loadSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (!isMounted) {
         return;
       }
       setSession(session);
       if (session) {
-        const { data: { session: refreshed } } = await supabase.auth.refreshSession();
+        const { data: { session: refreshed } } = await supabaseClient.auth.refreshSession();
         if (!isMounted) {
           return;
         }
@@ -46,7 +50,7 @@ function App() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabaseClient.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
 
@@ -57,6 +61,10 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setShowLogin(false);
+      return;
+    }
     if (session) {
       setShowLogin(false);
     }
@@ -74,4 +82,3 @@ function App() {
 }
 
 export default App;
-
