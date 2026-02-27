@@ -58,6 +58,8 @@ export const EN_MESSAGES: Record<string, MessageValue> = {
   'whatsNew.feature.infographicExport': 'Added infographic exports to PNG, HTML, PDF, and Notion',
   'whatsNew.feature.videoOverviewExport': 'Added video overview exports to MP4, WAV audio, and storyboard exports (ZIP, PDF, PowerPoint, HTML)',
   'whatsNew.feature.exportActionsDiscovery': 'Improved export action discovery with content-type tabs and destination-based recent routes',
+
+  'whatsNew.feature.videoBatchDownload': 'Added bulk MP4 download for all NotebookLM videos with source-based filenames',
   'whatsNew.action.gotIt': 'Got it',
 
   'header.signOutTitle': 'Sign Out',

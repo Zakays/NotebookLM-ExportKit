@@ -254,6 +254,9 @@ const WHATS_NEW_FEATURES_BY_VERSION: Record<string, MessageKey[]> = {
     '1.4.3': [
         'whatsNew.feature.exportActionsDiscovery',
     ],
+    '1.4.4': [
+        'whatsNew.feature.videoBatchDownload',
+    ],
 };
 
 const compareSemver = (a: string, b: string) => {
@@ -782,26 +785,42 @@ export default function Dashboard({
                     const payload = response.payload;
                     const contentLabel = getContentLabel(payload.type);
                     if (payload.type === 'videooverview' && format === 'MP4' && exportTarget === 'download') {
-                        const videoItem = payload.items[0] as { videoUrl?: string } | undefined;
-                        const videoUrl = videoItem?.videoUrl;
-                        if (!videoUrl) {
+                        const videoItems = payload.items as { videoUrl?: string; title?: string }[];
+                        const validVideoItems = videoItems.filter((item) => typeof item?.videoUrl === 'string' && item.videoUrl.trim().length > 0);
+                        if (validVideoItems.length === 0) {
                             showNotice('error', t('notice.exportFailed'));
                             return;
                         }
-                        const filename = `notebooklm_video_overview_${tabTitle}_${timestamp}.mp4`;
-                        const downloadStart = performance.now();
-                        const bgDownload = await browser.runtime.sendMessage({
-                            type: 'download-video-file',
-                            url: videoUrl,
-                            filename
-                        });
-                        console.info('[VIDEO_OVERVIEW_EXPORT] bg_download_complete', {
-                            elapsedMs: Math.round(performance.now() - downloadStart),
-                            mode: bgDownload?.mode,
-                            bytes: bgDownload?.bytes,
-                            success: Boolean(bgDownload?.success)
-                        });
-                        if (!bgDownload?.success) {
+
+                        const folderName = `NotebookLM ExportKit/${tabTitle}`;
+                        let successCount = 0;
+                        for (let i = 0; i < validVideoItems.length; i += 1) {
+                            const videoItem = validVideoItems[i];
+                            const videoUrl = String(videoItem.videoUrl || '').trim();
+                            const itemTitle = sanitizeFilename(videoItem.title || `video_${i + 1}`);
+                            const filename = `${folderName}/${String(i + 1).padStart(2, '0')}_${itemTitle}_${timestamp}.mp4`;
+                            const downloadStart = performance.now();
+                            const bgDownload = await browser.runtime.sendMessage({
+                                type: 'download-video-file',
+                                url: videoUrl,
+                                filename
+                            });
+                            console.info('[VIDEO_OVERVIEW_EXPORT] bg_download_complete', {
+                                elapsedMs: Math.round(performance.now() - downloadStart),
+                                mode: bgDownload?.mode,
+                                bytes: bgDownload?.bytes,
+                                success: Boolean(bgDownload?.success),
+                                index: i + 1,
+                                total: validVideoItems.length,
+                                filename
+                            });
+                            if (!bgDownload?.success) {
+                                continue;
+                            }
+                            successCount += 1;
+                        }
+
+                        if (successCount === 0) {
                             showNotice('error', t('notice.exportFailed'));
                             return;
                         }
@@ -1160,4 +1179,3 @@ export default function Dashboard({
         </div>
     );
 }
-

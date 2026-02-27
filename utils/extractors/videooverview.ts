@@ -74,6 +74,66 @@ export const extractVideoOverview = async (tabId: number, format: ExportFormat):
                         };
                     };
 
+                    const uniqueByUrl = (items: VideoOverviewItem[]) => {
+                        const map = new Map<string, VideoOverviewItem>();
+                        items.forEach((item) => {
+                            if (!item.videoUrl) {
+                                return;
+                            }
+                            const key = item.videoUrl.trim();
+                            if (!key) {
+                                return;
+                            }
+                            if (!map.has(key)) {
+                                map.set(key, item);
+                            }
+                        });
+                        return Array.from(map.values());
+                    };
+
+                    const normalizeTitle = (value?: string | null) => {
+                        if (!value) {
+                            return undefined;
+                        }
+                        const normalized = value.replace(/\s+/g, ' ').trim();
+                        return normalized || undefined;
+                    };
+
+                    const collectCandidateVideoItemsFromNotebook = (doc: Document): VideoOverviewItem[] => {
+                        const output: VideoOverviewItem[] = [];
+                        const scripts = Array.from(doc.querySelectorAll('script'));
+                        const scriptText = scripts
+                            .map((script) => script.textContent || '')
+                            .join('\n');
+                        const scriptUrls = scriptText.match(/https?:\/\/[^"'<>\\\s]+/g) || [];
+                        scriptUrls
+                            .filter((url) => isLikelyVideoUrl(url))
+                            .forEach((videoUrl, index) => {
+                                output.push({
+                                    videoUrl,
+                                    title: normalizeTitle(doc.title) || `Video ${index + 1}`
+                                });
+                            });
+
+                        const sourceRows = Array.from(doc.querySelectorAll('a, button, [role="button"], div, li'));
+                        sourceRows.forEach((row) => {
+                            const html = (row as HTMLElement).outerHTML || '';
+                            const urls = html.match(/https?:\/\/[^"'<>\\\s]+/g) || [];
+                            const videoUrl = urls.find((url) => isLikelyVideoUrl(url));
+                            if (!videoUrl) {
+                                return;
+                            }
+                            const titleNode = (row as HTMLElement).querySelector('h1, h2, h3, .title, .source-title, [data-title], [aria-label]');
+                            const title = normalizeTitle(titleNode?.textContent)
+                                || normalizeTitle((row as HTMLElement).getAttribute('aria-label'))
+                                || normalizeTitle((row as HTMLElement).textContent)
+                                || normalizeTitle(doc.title);
+                            output.push({ videoUrl, title });
+                        });
+
+                        return uniqueByUrl(output);
+                    };
+
                     const extractFromDocument = (doc: Document, depth: number): any => {
                         if (!doc || depth > 4) {
                             return null;
@@ -122,21 +182,14 @@ export const extractVideoOverview = async (tabId: number, format: ExportFormat):
                             };
                         }
 
-                        const scriptText = Array.from(doc.querySelectorAll('script'))
-                            .map((script) => script.textContent || '')
-                            .join('\n');
-                        const scriptUrls = scriptText.match(/https?:\/\/[^"'<>\\\s]+/g) || [];
-                        const scriptedVideoUrl = scriptUrls.find((url) => isLikelyVideoUrl(url));
-                        if (scriptedVideoUrl) {
+                        const notebookItems = collectCandidateVideoItemsFromNotebook(doc);
+                        if (notebookItems.length > 0) {
                             return {
                                 success: true,
                                 data: {
                                     videooverview: {
                                         title: (doc.title || '').trim(),
-                                        items: [{
-                                            videoUrl: scriptedVideoUrl,
-                                            title: (doc.title || '').trim() || undefined
-                                        }]
+                                        items: notebookItems
                                     }
                                 },
                                 frameUrl: doc.URL
