@@ -14,9 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { supabase } from './supabase';
+import { SUPABASE_CONFIG_ERROR_MESSAGE, isSupabaseConfigured, supabase } from './supabase';
 
 export type PlanTier = 'free' | 'plus' | 'pro';
+
+const getSupabaseClient = () => {
+    if (!supabase || !isSupabaseConfigured) {
+        throw new Error(SUPABASE_CONFIG_ERROR_MESSAGE);
+    }
+    return supabase;
+};
 
 export const getPlan = (session: any): PlanTier => {
     const plan = session?.user?.app_metadata?.plan;
@@ -30,7 +37,8 @@ export const consumeTrial = async (consume: boolean): Promise<{
     allowed: boolean;
     remaining?: number;
 }> => {
-    const { data, error } = await supabase.functions.invoke('consume-trial', {
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient.functions.invoke('consume-trial', {
         body: { consume },
     });
     if (error) {
@@ -40,7 +48,8 @@ export const consumeTrial = async (consume: boolean): Promise<{
 };
 
 export const createCheckoutSession = async (): Promise<string> => {
-    const { data, error } = await supabase.functions.invoke('create-checkout-session');
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient.functions.invoke('create-checkout-session');
     if (error) {
         throw error;
     }
@@ -51,7 +60,8 @@ export const createCheckoutSession = async (): Promise<string> => {
 };
 
 export const createCustomerPortalLink = async (): Promise<string> => {
-    const { data, error } = await supabase.functions.invoke('create-customer-portal-link');
+    const supabaseClient = getSupabaseClient();
+    const { data, error } = await supabaseClient.functions.invoke('create-customer-portal-link');
     if (error) {
         throw error;
     }

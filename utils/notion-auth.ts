@@ -40,16 +40,18 @@ const inMemoryStorage = (() => {
   };
 })();
 
-const notionAuthClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_DEFAULT_KEY, {
-  auth: {
-    storage: inMemoryStorage,
-    storageKey: 'sb-notion-oauth-token',
-    autoRefreshToken: false,
-    persistSession: false,
-    detectSessionInUrl: false,
-    flowType: 'pkce',
-  },
-});
+const notionAuthClient = SUPABASE_URL && SUPABASE_PUBLISHABLE_DEFAULT_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_DEFAULT_KEY, {
+    auth: {
+      storage: inMemoryStorage,
+      storageKey: 'sb-notion-oauth-token',
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+      flowType: 'pkce',
+    },
+  })
+  : null;
 
 const getStorageValue = async (key: string) => {
   const result = await browser.storage.local.get(key);
@@ -168,7 +170,7 @@ const parseOAuthRedirect = (resultUrl: string) => {
 };
 
 export const connectNotion = async () => {
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_DEFAULT_KEY) {
+  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_DEFAULT_KEY || !notionAuthClient) {
     throw new Error('Missing Supabase configuration for Notion OAuth.');
   }
   const redirectTo = browser.identity.getRedirectURL(DEFAULT_REDIRECT_PATH);
