@@ -83,6 +83,14 @@ pnpm build
 pnpm zip
 ```
 
+Para gerar uma pasta de extensão pronta dentro do projeto (`./chrome-extension`):
+
+```bash
+pnpm chrome:extension
+```
+
+Para testar no Chrome em modo desenvolvedor, veja: `docs/CHROME_EXTENSION_SETUP.md`.
+
 Browser-specific builds:
 
 ```bash
