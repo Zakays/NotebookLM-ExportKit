@@ -35,6 +35,7 @@ What it does:
   - Preserve structure for quizzes, flashcards, and mindmaps so exports stay readable and ready to use.
   - One-click exports designed for common workflows in Excel/Sheets, Anki, Obsidian, Notion, Word, PDF, HTML, PowerPoint (PPTX), and mind-mapping tools.
   - Send exports directly to Google Drive or Notion, or keep the default local download flow.
+  - For video overviews in MP4, automatically downloads all detected videos into a notebook folder with source-based file names when available.
 
 Why install:
 

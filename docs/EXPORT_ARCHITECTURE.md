@@ -19,6 +19,7 @@ For Google OAuth/Drive setup, see `docs/GOOGLE_OAUTH_SETUP.md`.
 - Slide decks support PDF, PPTX, HTML, and ZIP (Markdown + image files).
 - Infographics support PNG, HTML, PDF, and Notion native rendering.
 - Video overviews support MP4, WAV audio, storyboard exports in Markdown ZIP/ZIP/PDF/PPTX/HTML (including video links in Markdown/PPTX/HTML), and Notion native video+frame layouts.
+- MP4 local delivery for video overviews supports bulk downloads when multiple video URLs are detected, saving files under a notebook-scoped Downloads subfolder with indexed source titles.
 - Exporters return `{ blob, filename, mimeType }` so delivery targets can decide whether to download or upload.
 
 ### Destination renderers (native layouts)
