@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
 :root {
-  --bg: #f6f1e7;
-  --bg-deep: #efe4d6;
-  --ink: #171717;
-  --muted: #5b5b5b;
-  --accent: #d3542c;
-  --accent-light: #ff8f5a;
-  --accent-dark: #b14320;
-  --teal: #1f6f78;
-  --card: #fff7ef;
-  --stroke: #e3d6c5;
-  --shadow: 0 18px 40px rgba(23, 23, 23, 0.12);
+  --bg: #0b1220;
+  --bg-deep: #111a2b;
+  --ink: #e9f0ff;
+  --muted: #9bb0d0;
+  --accent: #7c3aed;
+  --accent-light: #22d3ee;
+  --accent-dark: #5b21b6;
+  --teal: #06b6d4;
+  --card: #1a2438;
+  --stroke: #2b3b5a;
+  --shadow: 0 18px 40px rgba(4, 10, 24, 0.5);
   --disclosure-size: 16px;
   --disclosure-stroke: 2px;
   --radius-xs: 8px;
@@ -57,10 +57,10 @@
 
 .exportkit-shell {
   font-family: var(--font-body);
-  color: var(--ink);
+  color: #eaf2ff;
   background:
-    radial-gradient(240px 140px at 10% -10%, #ffd2b9 0%, transparent 70%),
-    radial-gradient(220px 160px at 90% 0%, #cfe7e6 0%, transparent 65%),
+    radial-gradient(240px 140px at 10% -10%, #3b82f6 0%, transparent 70%),
+    radial-gradient(220px 160px at 90% 0%, #a78bfa 0%, transparent 65%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
   min-height: 100vh;
   display: flex;
@@ -102,8 +102,8 @@
   font-size: var(--size-sm);
   border-radius: var(--radius-md);
   border: 1px solid var(--stroke);
-  background: #fff;
-  color: var(--ink);
+  background: #16223a;
+  color: #eaf2ff;
   font-weight: 600;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: inline-flex;
@@ -146,7 +146,7 @@
   position: absolute;
   top: var(--space-6);
   left: var(--panel-pad-x, var(--space-6));
-  background: #fff;
+  background: #16223a;
 }
 
 .button-content {
@@ -208,11 +208,11 @@
 .toggle-btn {
   border: 1px solid var(--stroke);
   border-radius: var(--radius-md);
-  background: #fff;
+  background: #16223a;
   padding: var(--space-2);
   font-size: var(--size-sm);
   font-weight: 600;
-  color: var(--ink);
+  color: #eaf2ff;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -239,7 +239,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  background: #fff;
+  background: #16223a;
   border-radius: var(--radius-lg);
   border: 1px solid var(--stroke);
   padding: var(--space-3);
@@ -254,7 +254,7 @@
 }
 
 .setup-card {
-  background: #fff;
+  background: #16223a;
   border-radius: var(--radius-lg);
   border: 1px solid var(--stroke);
   padding: var(--space-4);
@@ -350,8 +350,8 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   border: 1px solid var(--stroke);
-  background: #fff;
-  color: var(--ink);
+  background: #16223a;
+  color: #eaf2ff;
   font-size: var(--size-xs);
 }
 
@@ -380,7 +380,7 @@
 
 .drive-account-card {
   margin-top: var(--space-2);
-  background: #fff;
+  background: #16223a;
   border-radius: var(--radius-sm);
   border: 1px solid var(--stroke);
   padding: var(--space-2) var(--space-3);
@@ -415,7 +415,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  background: #fff;
+  background: #16223a;
   border-radius: var(--radius-lg);
   border: 1px solid var(--stroke);
   padding: var(--space-3);
@@ -442,7 +442,7 @@
 }
 
 .upload-progress {
-  background: #fff;
+  background: #16223a;
   border: 1px solid var(--stroke);
   border-radius: var(--radius-lg);
   padding: var(--space-3);
@@ -580,7 +580,7 @@
   align-items: center;
   gap: var(--space-2);
   font-size: var(--size-sm);
-  color: var(--ink);
+  color: #eaf2ff;
 }
 
 .modal-trial {
@@ -609,8 +609,8 @@
   align-items: center;
   gap: var(--space-2);
   font-size: var(--size-sm);
-  color: var(--ink);
-  background: #fff;
+  color: #eaf2ff;
+  background: #16223a;
   border: 1px solid var(--stroke);
   border-radius: var(--radius-md);
   padding: var(--space-3);
@@ -651,7 +651,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  background: #fff;
+  background: #16223a;
   border-radius: var(--radius-lg);
   border: 1px solid var(--stroke);
   padding: var(--space-4);
@@ -698,7 +698,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  background: #fff;
+  background: #16223a;
   border-radius: var(--radius-lg);
   border: 1px solid var(--stroke);
   padding: var(--space-3);
@@ -758,7 +758,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  background: #fff;
+  background: #16223a;
   border-radius: var(--radius-md);
   border: 1px solid var(--stroke);
   padding: var(--space-3);
@@ -836,7 +836,7 @@
 .content-type-tab {
   border: 1px solid var(--stroke);
   border-radius: 999px;
-  background: #fff;
+  background: #16223a;
   color: var(--muted);
   font-size: var(--size-xxs);
   font-weight: 700;
@@ -867,7 +867,7 @@
 }
 
 .recent-exports {
-  background: #fff;
+  background: #16223a;
   border: 1px solid var(--stroke);
   border-radius: var(--radius-lg);
   padding: var(--space-3);
@@ -932,7 +932,7 @@
 .notion-hint {
   font-size: var(--size-xs);
   color: var(--muted);
-  background: #fff;
+  background: #16223a;
   border: 1px dashed var(--stroke);
   border-radius: var(--radius-md);
   padding: var(--space-2) var(--space-3);
@@ -984,7 +984,7 @@
 }
 
 .notion-layout {
-  background: #fff;
+  background: #16223a;
   border: 1px solid var(--stroke);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
@@ -1001,7 +1001,7 @@
 
 .notion-layout-detail {
   font-size: var(--size-xs);
-  color: var(--ink);
+  color: #eaf2ff;
 }
 
 .pdf-quality-popover {
@@ -1009,7 +1009,7 @@
   top: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
-  background: #fff;
+  background: #16223a;
   border: 1px solid var(--stroke);
   border-radius: var(--radius-sm);
   padding: var(--space-2);
@@ -1043,7 +1043,7 @@
 .pdf-quality-btn {
   border: 1px solid var(--stroke);
   border-radius: var(--radius-sm);
-  background: #fff;
+  background: #16223a;
   padding: 4px 8px;
   font-size: var(--size-xxs);
   font-weight: 600;
@@ -1065,7 +1065,7 @@
 }
 
 .coming-soon {
-  background: #fff;
+  background: #16223a;
   border-radius: var(--radius-lg);
   border: 1px dashed var(--stroke);
   padding: var(--space-3);
@@ -1214,8 +1214,8 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   border: 1px solid var(--stroke);
-  background: #fff;
-  color: var(--ink);
+  background: #16223a;
+  color: #eaf2ff;
   width: 100%;
   font-size: var(--size-sm);
 }
