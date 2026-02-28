@@ -784,13 +784,14 @@ export default function Dashboard({
                     const payload = response.payload;
                     const contentLabel = getContentLabel(payload.type);
                     if (payload.type === 'videooverview' && format === 'MP4' && exportTarget === 'download') {
-                        const videoItem = payload.items[0] as { videoUrl?: string } | undefined;
+                        const videoItem = payload.items[0] as { videoUrl?: string; title?: string } | undefined;
                         const videoUrl = videoItem?.videoUrl;
                         if (!videoUrl) {
                             showNotice('error', t('notice.exportFailed'));
                             return;
                         }
-                        const filename = `notebooklm_video_overview_${tabTitle}_${timestamp}.mp4`;
+                        const videoTitle = sanitizeFilename(videoItem?.title || rawTabTitle || 'video_overview');
+                        const filename = `notebooklm_video_overview_${videoTitle}_${timestamp}.mp4`;
                         const downloadStart = performance.now();
                         const bgDownload = await browser.runtime.sendMessage({
                             type: 'download-video-file',

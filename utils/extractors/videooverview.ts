@@ -74,6 +74,71 @@ export const extractVideoOverview = async (tabId: number, format: ExportFormat):
                         };
                     };
 
+                    const cleanText = (value?: string | null) => (value || '').replace(/\s+/g, ' ').trim();
+
+                    const isLikelyUiHint = (value: string) => {
+                        const normalized = value.toLowerCase();
+                        const blocked = [
+                            'copiar',
+                            'boa resposta',
+                            'resposta ruim',
+                            'ir para o fim',
+                            'clique para abrir os detalhes da citação',
+                            'o histórico de conversa agora é salvo entre sessões'
+                        ];
+                        return blocked.some((entry) => normalized.includes(entry));
+                    };
+
+                    const pickBestTitle = (candidates: Array<string | null | undefined>) => {
+                        const sanitized = candidates
+                            .map((value) => cleanText(value))
+                            .filter(Boolean)
+                            .filter((value) => value.length > 3)
+                            .filter((value) => !isLikelyUiHint(value));
+                        if (sanitized.length === 0) {
+                            return '';
+                        }
+                        const sorted = sanitized.sort((a, b) => b.length - a.length);
+                        return sorted[0] || '';
+                    };
+
+                    const extractTooltipTitle = (doc: Document) => {
+                        const tooltipNodes = Array.from(
+                            doc.querySelectorAll('.cdk-describedby-message-container [id^="cdk-describedby-message"]')
+                        );
+                        return pickBestTitle(tooltipNodes.map((node) => node.textContent));
+                    };
+
+                    const getVideoTitle = (doc: Document, player: Element, videoElement: HTMLVideoElement | null) => {
+                        const nearestContainer = (player.closest('main') || player.parentElement || doc.body) as ParentNode;
+                        const headingCandidates = Array.from(
+                            nearestContainer.querySelectorAll(
+                                'h1, h2, h3, [role="heading"], [data-testid*="title" i], [class*="title" i]'
+                            )
+                        )
+                            .slice(0, 30)
+                            .map((node) => node.textContent);
+
+                        const ariaDescribedByValues = Array.from(doc.querySelectorAll('[aria-describedby]'))
+                            .map((node) => node.getAttribute('aria-describedby') || '')
+                            .flatMap((value) => value.split(/\s+/g))
+                            .map((value) => value.trim())
+                            .filter(Boolean);
+                        const describedByTexts = ariaDescribedByValues
+                            .map((id) => doc.getElementById(id)?.textContent || '')
+                            .filter(Boolean);
+
+                        return pickBestTitle([
+                            videoElement?.getAttribute('aria-label'),
+                            videoElement?.getAttribute('title'),
+                            player.getAttribute('aria-label'),
+                            ...headingCandidates,
+                            ...describedByTexts,
+                            extractTooltipTitle(doc),
+                            doc.title
+                        ]);
+                    };
+
                     const extractFromDocument = (doc: Document, depth: number): any => {
                         if (!doc || depth > 4) {
                             return null;
@@ -105,14 +170,15 @@ export const extractVideoOverview = async (tabId: number, format: ExportFormat):
                             }
 
                             const durationMeta = getDurationMeta(doc);
+                            const extractedTitle = getVideoTitle(doc, player, videoElement);
                             return {
                                 success: true,
                                 data: {
                                     videooverview: {
-                                        title: (doc.title || '').trim(),
+                                        title: extractedTitle || (doc.title || '').trim(),
                                         items: [{
                                             videoUrl,
-                                            title: (doc.title || '').trim() || undefined,
+                                            title: extractedTitle || (doc.title || '').trim() || undefined,
                                             durationSeconds: durationMeta.durationSeconds,
                                             durationLabel: durationMeta.durationLabel
                                         }]
@@ -128,14 +194,15 @@ export const extractVideoOverview = async (tabId: number, format: ExportFormat):
                         const scriptUrls = scriptText.match(/https?:\/\/[^"'<>\\\s]+/g) || [];
                         const scriptedVideoUrl = scriptUrls.find((url) => isLikelyVideoUrl(url));
                         if (scriptedVideoUrl) {
+                            const extractedTitle = pickBestTitle([extractTooltipTitle(doc), doc.title]);
                             return {
                                 success: true,
                                 data: {
                                     videooverview: {
-                                        title: (doc.title || '').trim(),
+                                        title: extractedTitle || (doc.title || '').trim(),
                                         items: [{
                                             videoUrl: scriptedVideoUrl,
-                                            title: (doc.title || '').trim() || undefined
+                                            title: extractedTitle || (doc.title || '').trim() || undefined
                                         }]
                                     }
                                 },
